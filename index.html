@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="ja" ng-app="myApp">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Angular Validate</title>
+</head>
+
+<body ng-controller="MyController">
+    <form class="" action="" method="post" name="myform" novalidate>
+        <div class="mail_address_box">
+            <input type="text" name="email" id="email" placeholder="メールアドレス" ng-model="email" required ng-pattern="/^[a-z0-9!#$%&'*+\/=?^_`{|}~.-]+@[a-z0-9]([a-z0-9-]*[a-z0-9])?(\.[a-z0-9]([a-z0-9-]*[a-z0-9])?)*$/i" />
+            <!-- mail_address_box -->
+        </div>
+        <p class="error_message" ng-show="myform.email.$error.required" ng-if="myform.email.$dirty">必須です。</p>
+        <p class="error_message" ng-show="myform.email.$error.pattern" ng-if="myform.email.$dirty">メールアドレスを入力してください</p>
+        <div class="password_box">
+            <input type="password" name="password" id="password" placeholder="パスワード" ng-model="password" ng-minlength="8" />
+            <!-- /password_box -->
+        </div>
+        <p class="error_message" ng-show="myform.password.$error.minlength" ng-if="myform.password.$dirty">8文字以で設定してください</p>
+        <div class="password_check">
+            <input type="password" name="password_1" id="password_1" ng-modle="password_1" match="password">
+            <p class="error_message" ng-show="myform.password_1.$error.mismatch" ng-if="myform.password_1.$dirty">一致しません</p>
+        </div>
+        <div class="confirm_btn">
+            <input type="submit" value="登録する" name="" ng-disabled="myform.$invalid" />
+            <!-- /confirm_btn -->
+        </div>
+    </form>
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.5/angular.min.js"></script>
+    <script>
+        // Angular
+        angular.module('myApp', [])
+            .controller('MyController', ['$scope', function($scope) {}])
+            .directive("match", ["$parse", function($parse) {
+               return {
+                require: 'ngModel',
+                link: function(scope, elem, attrs, ctrl) {
+                  scope.$watch(function() {
+                    var target = $parse(attrs.match)(scope);  // 比較対象となるモデルの値
+                    return !ctrl.$modelValue || target === ctrl.$modelValue;
+                  }, function(currentValue) {
+                    ctrl.$setValidity('mismatch', currentValue);
+                  });
+                }
+              }
+            }]);
+    </script>
+</body>
+
+</html>
